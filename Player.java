@@ -6,8 +6,10 @@ import java.util.Scanner;
  * Class for handling Player turns, hands, and interactions.
  */
 public class Player {
+    private final int playerNum;
+    private final String name;
     private List<Card> hand;
-    private String name;
+    
 
     /**
      * Initializes a Player object when called.
@@ -16,7 +18,8 @@ public class Player {
      */
     public Player(int playerNum) {
         this.hand = new ArrayList<>();
-        this.name = "Player " + playerNum;
+        this.playerNum = playerNum;
+        this.name = "Player " + (playerNum + 1);
     }
 
     /**
@@ -44,9 +47,9 @@ public class Player {
      * Handles the normal turn of a player: Play cards, then draw.
      * 
      * @param game the current game state
+     * @param in the Scanner object used for user input
      */
-    public void takeTurn(Game game) {
-        Scanner in = new Scanner(System.in);
+    public void takeTurn(Game game, Scanner in) {
         //Pre-turn info
         System.out.println(this.toString());
         System.out.println("You must take " + game.getNumTurns() + " turn(s)");
@@ -58,15 +61,48 @@ public class Player {
             if (response.equals("y")) {
                 System.out.print("Which card would you like to play (index) " + this.hand.toString() + ": ");
                 Card cardChoice = this.hand.remove(in.nextInt());
-                cardChoice.playCard();
+                int gameAction = cardChoice.playCard(game, in);
+                if (gameAction == 1) {
+                    response = "";
+                } else if (gameAction == 2) {
+                    this.drawCard(cardChoice);
+                }
                 //Catch extra \n
                 in.nextLine();
             } else {
                 System.out.println("Drawing card and ending turn...");
                 Card drawnCard = this.drawCard(game.getDrawPile());
                 System.out.println("You drew " + drawnCard.toString());
+
+                //Exploding Kitten?
+                boolean drewKitten = false;
+                int index = -1;
+                if (drawnCard.getType() == CardType.EXPLODING_KITTEN) {
+                    drewKitten = true;
+                    this.hand.remove(this.hand.size() - 1);
+                    //Checks to see if Player has defuse
+                    for (int i = 0; i < this.hand.size(); i++) {
+                        if (this.hand.get(i).getType() == CardType.DEFUSE) {
+                            index = i;
+                        }
+                    }
+                    //If they do, use it. If they don't, eliminate the Player from the game
+                    if (index >= 0) {
+                        game.getDiscardPile().push(this.hand.get(index));
+                        this.hand.remove(index);
+                        System.out.println("You were saved by your defuse!");
+                        System.out.print("Where would you like to insert the exploding kitten? (0 - " + (game.getDrawPile().size() - 1) + ") ");
+                        game.getDrawPile().add(in.nextInt(), drawnCard);
+                    } else {
+                        System.out.println("You have no defuse and have lost the game!");
+                        game.getDiscardPile().push(drawnCard);
+                        game.getPlayers().remove(game.getCurrPlayer());
+                    }
+                }
                 //Ends turn. Only advances to next player if current player does not have more turns
-                if (game.getNumTurns() == 1) {
+                if (drewKitten && index == -1) {
+                    //Do nothing. Ends turn and next player is in currPlayer spot
+                } else if (game.getNumTurns() == 1) {
                     game.setCurrPlayer(game.getCurrPlayer() + 1);
                 } else {
                     game.setNumTurns(game.getNumTurns() - 1);
@@ -76,6 +112,13 @@ public class Player {
         
     }
 
+    public List<Card> getHand() {
+        return this.hand;
+    }
+
+    public String getName() {
+        return this.name;
+    }
     /**
      * Represents the object as a String.
      * 

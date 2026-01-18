@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -100,6 +101,7 @@ public class Game {
     }
     public static void main (String[] args) {
         final int NUM_PLAYERS = 2;
+        Scanner in = new Scanner(System.in);
         //Initialize Game
         Game game = new Game(NUM_PLAYERS);
         //Run Game
@@ -116,7 +118,9 @@ public class Game {
                 game.getDiscardPile().clear();
             }
             //Take turns
-            game.getPlayers().get(game.getCurrPlayer()).takeTurn(game);
+            game.getPlayers().get(game.getCurrPlayer()).takeTurn(game, in);
         }
+        System.out.println(game.players.get(0).getName() + " wins!");
+        in.close();
     }
 }
