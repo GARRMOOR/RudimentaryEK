@@ -63,8 +63,10 @@ public class Player {
                 Card cardChoice = this.hand.remove(in.nextInt());
                 int gameAction = cardChoice.playCard(game, in);
                 if (gameAction == 1) {
+                    //End turn
                     response = "";
                 } else if (gameAction == 2) {
+                    //Redraw used card
                     this.drawCard(cardChoice);
                 }
                 //Catch extra \n

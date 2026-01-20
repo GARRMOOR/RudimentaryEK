@@ -28,10 +28,10 @@ public class Card {
                 game.setNumTurns(2);
                 return 1;
             }
-            case BEARD_CAT -> {
+            case BEARD_CAT, CATERMELON, HAIRY_POTATO_CAT, RAINBOW_RALPHING_CAT, TACOCAT -> {
                 int cardCount = 1;
                 for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
-                    if (card.getType() == CardType.BEARD_CAT) {
+                    if (card.getType() == this.type) {
                         cardCount++;
                     }
                 }
@@ -53,144 +53,24 @@ public class Card {
                         return 2;
                     }
                     case 2 -> {
-                        //steal card
-                        return 2;
-                    }
-                    case 3 -> {
-                        //name card
-                        return 2;
-                    }
-                }
-            }
-            case CATERMELON -> {
-                int cardCount = 1;
-                for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
-                    if (card.getType() == CardType.CATERMELON) {
-                        cardCount++;
-                    }
-                }
-                boolean hasPair = cardCount >= 2;
-                boolean hasTrip = cardCount >= 3;
-                int choice;
-                if (hasTrip) {
-                    System.out.print("You have enough of this card to play two or three at once. How many would you like to play? (0 - cancel, 2 - random steal, 3 - name your card) ");
-                    choice = in.nextInt(); 
-                } else if (hasPair) {
-                    System.out.print("You have enough of this card to play two at once. How many would you like to play? (0 - cancel, 2 - random steal) ");
-                    choice = in.nextInt();
-                } else {
-                    System.out.println("You can't play this card right now!");
-                    return 0;
-                }
-                switch (choice) {
-                    case 0 -> {
-                        return 2;
-                    }
-                    case 2 -> {
-                        //steal card
-                        return 2;
-                    }
-                    case 3 -> {
-                        //name card
-                        return 2;
-                    }
-                }
-            }
-            case HAIRY_POTATO_CAT -> {
-                int cardCount = 1;
-                for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
-                    if (card.getType() == CardType.HAIRY_POTATO_CAT) {
-                        cardCount++;
-                    }
-                }
-                boolean hasPair = cardCount >= 2;
-                boolean hasTrip = cardCount >= 3;
-                int choice;
-                if (hasTrip) {
-                    System.out.print("You have enough of this card to play two or three at once. How many would you like to play? (0 - cancel, 2 - random steal, 3 - name your card) ");
-                    choice = in.nextInt(); 
-                } else if (hasPair) {
-                    System.out.print("You have enough of this card to play two at once. How many would you like to play? (0 - cancel, 2 - random steal) ");
-                    choice = in.nextInt();
-                } else {
-                    System.out.println("You can't play this card right now!");
-                    return 0;
-                }
-                switch (choice) {
-                    case 0 -> {
-                        return 2;
-                    }
-                    case 2 -> {
-                        //steal card
-                        return 2;
-                    }
-                    case 3 -> {
-                        //name card
-                        return 2;
-                    }
-                }
-            }
-            case RAINBOW_RALPHING_CAT -> {
-                int cardCount = 1;
-                for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
-                    if (card.getType() == CardType.RAINBOW_RALPHING_CAT) {
-                        cardCount++;
-                    }
-                }
-                boolean hasPair = cardCount >= 2;
-                boolean hasTrip = cardCount >= 3;
-                int choice;
-                if (hasTrip) {
-                    System.out.print("You have enough of this card to play two or three at once. How many would you like to play? (0 - cancel, 2 - random steal, 3 - name your card) ");
-                    choice = in.nextInt(); 
-                } else if (hasPair) {
-                    System.out.print("You have enough of this card to play two at once. How many would you like to play? (0 - cancel, 2 - random steal) ");
-                    choice = in.nextInt();
-                } else {
-                    System.out.println("You can't play this card right now!");
-                    return 0;
-                }
-                switch (choice) {
-                    case 0 -> {
-                        return 2;
-                    }
-                    case 2 -> {
-                        //steal card
-                        return 2;
-                    }
-                    case 3 -> {
-                        //name card
-                        return 2;
-                    }
-                }
-            }
-            case TACOCAT -> {
-                int cardCount = 1;
-                for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
-                    if (card.getType() == CardType.TACOCAT) {
-                        cardCount++;
-                    }
-                }
-                boolean hasPair = cardCount >= 2;
-                boolean hasTrip = cardCount >= 3;
-                int choice;
-                if (hasTrip) {
-                    System.out.print("You have enough of this card to play two or three at once. How many would you like to play? (0 - cancel, 2 - random steal, 3 - name your card) ");
-                    choice = in.nextInt(); 
-                } else if (hasPair) {
-                    System.out.print("You have enough of this card to play two at once. How many would you like to play? (0 - cancel, 2 - random steal) ");
-                    choice = in.nextInt();
-                } else {
-                    System.out.println("You can't play this card right now!");
-                    return 0;
-                }
-                switch (choice) {
-                    case 0 -> {
-                        return 2;
-                    }
-                    case 2 -> {
-                        //steal card
-                        return 2;
+                        System.out.print("Which player would you like to pick a card from: " + game.getPlayers().toString());
+                        int playerChoice = in.nextInt();
+                        if (game.getPlayers().get(playerChoice - 1).equals(game.getPlayers().get(game.getCurrPlayer()))) {
+                            System.out.println("You can't take from yourself!");
+                            return 2;
+                        } 
+                        System.out.print("Please pick which card you want (0 - " + game.getPlayers().get(playerChoice - 1).getHand().size() + "): ");
+                        int cardChoice = in.nextInt();
+                        Card drawnCard = game.getPlayers().get(playerChoice - 1).getHand().remove(cardChoice);
+                        game.getPlayers().get(game.getCurrPlayer()).drawCard(drawnCard);
+                        System.out.println("You drew " + drawnCard.toString());
+                        for (Card card : game.getPlayers().get(game.getCurrPlayer()).getHand()) {
+                            if (card.getType() == this.type) {
+                                game.getPlayers().get(game.getCurrPlayer()).getHand().remove(card);
+                                return 0;
+                            }
+                        }
+                        return 0;
                     }
                     case 3 -> {
                         //name card
